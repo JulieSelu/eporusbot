@@ -59,10 +59,10 @@ func handleUpdate(update *tgbotapi.Update) TelegramResponse {
 
 	var sourceLanguage, targetLanguage string
 	switch update.Message.Command() {
-	case "rus":
+	case "epo":
 		sourceLanguage = "ru"
 		targetLanguage = "eo"
-	case "epo":
+	case "rus":
 		sourceLanguage = "eo"
 		targetLanguage = "ru"
 	default:
