@@ -27,15 +27,26 @@ type Response struct {
 	IsBase64Encoded bool              `json:"isBase64Encoded"`
 }
 
+func getTextAndReplyId(message *tgbotapi.Message) (string, int) {
+	text := message.CommandArguments()
+	text = strings.TrimSpace(text)
+
+	if text != "" {
+		return text, message.MessageID
+	}
+
+	text = message.ReplyToMessage.Text
+	text = strings.TrimSpace(text)
+	return text, message.ReplyToMessage.MessageID
+}
+
 func handleUpdate(update *tgbotapi.Update) TelegramResponse {
 	if update.Message == nil || !update.Message.IsCommand() {
 		return TelegramResponse{}
 	}
 
-	arguments := update.Message.CommandArguments()
-	arguments = strings.TrimSpace(arguments)
-
-	if arguments == "" {
+	text, replyToMessageId := getTextAndReplyId(update.Message)
+	if text == "" {
 		return TelegramResponse{}
 	}
 
@@ -50,12 +61,12 @@ func handleUpdate(update *tgbotapi.Update) TelegramResponse {
 		targetLanguage = "ru"
 	}
 
-	msgText := translate.Translate(arguments, sourceLanguage, targetLanguage)
+	msgText := translate.Translate(text, sourceLanguage, targetLanguage)
 
 	return TelegramResponse{
 		Method:           "sendMessage",
 		ChatId:           update.Message.Chat.ID,
-		ReplyToMessageID: update.Message.MessageID,
+		ReplyToMessageID: replyToMessageId,
 		Text:             msgText,
 	}
 }
