@@ -34,9 +34,17 @@ func getTextAndReplyId(message *tgbotapi.Message) (string, int) {
 		return text, message.MessageID
 	}
 
+	if message.ReplyToMessage == nil {
+		return "", 0
+	}
+
 	text = message.ReplyToMessage.Text
 	text = strings.TrimSpace(text)
-	return text, message.ReplyToMessage.MessageID
+
+	if text != "" {
+		return text, message.ReplyToMessage.MessageID
+	}
+	return "", 0
 }
 
 func handleUpdate(update *tgbotapi.Update) TelegramResponse {
@@ -50,7 +58,6 @@ func handleUpdate(update *tgbotapi.Update) TelegramResponse {
 	}
 
 	var sourceLanguage, targetLanguage string
-
 	switch update.Message.Command() {
 	case "rus":
 		sourceLanguage = "ru"
