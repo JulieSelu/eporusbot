@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -43,14 +42,12 @@ func Translate(text string, sourceLanguage string, targetLanguage string) string
 	jsonData, err := json.Marshal(data)
 
 	if err != nil {
-		log.Panic("Exception during convert data to json")
+		print("Exception during convert data to json")
 	}
-	log.Print(jsonData)
-	log.Print(string(jsonData))
 
 	request, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
-		log.Panic("Exception during create request")
+		print("Exception during create translate request")
 	}
 
 	yandexAuthorizationHead := fmt.Sprintf("Api-Key %s", os.Getenv("YandexCloudApiKey"))
@@ -58,19 +55,18 @@ func Translate(text string, sourceLanguage string, targetLanguage string) string
 
 	response, err := client.Do(request)
 	if err != nil {
-		log.Panic("Error during translate")
+		print("Error during translate")
 	}
 
 	defer response.Body.Close()
 
 	body, err := io.ReadAll(response.Body)
-	log.Print(string(body))
 
 	var v TranslationsStruct
 
 	err = json.Unmarshal(body, &v)
 	if err != nil {
-		log.Panic("Error")
+		print("Error during unmarshal translate response")
 	}
 
 	return v.Translations[0].Text

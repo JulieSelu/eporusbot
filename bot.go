@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/andamound/telegram-esperanto-bot/translate"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"log"
 	"strings"
 )
 
@@ -59,6 +58,8 @@ func handleUpdate(update *tgbotapi.Update) TelegramResponse {
 	case "epo":
 		sourceLanguage = "eo"
 		targetLanguage = "ru"
+	default:
+		return TelegramResponse{}
 	}
 
 	msgText := translate.Translate(text, sourceLanguage, targetLanguage)
@@ -76,7 +77,7 @@ func Handler(ctx context.Context, request *Request) ([]byte, error) {
 
 	err := json.Unmarshal([]byte(request.Body), &update)
 	if err != nil {
-		log.Panic("Exception during unmarshal request body")
+		print("Exception during unmarshal request body")
 	}
 
 	telegramResponse := handleUpdate(&update)
@@ -92,7 +93,7 @@ func Handler(ctx context.Context, request *Request) ([]byte, error) {
 
 	marshalResponse, err := json.Marshal(&response)
 	if err != nil {
-		log.Panic("Exception during marshal request body")
+		print("Exception during marshal request body")
 	}
 
 	return marshalResponse, nil
