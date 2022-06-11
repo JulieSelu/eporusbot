@@ -1,0 +1,26 @@
+name: "Deploy new function version"
+on: push
+#    branches:
+#      - "master"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: yc-actions/yc-sls-function@v2
+      with:
+        yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+        folder-id: ${{ secrets.folder_id }}
+        function-name: 'test-function'
+        runtime: 'golang117'
+        entrypoint: 'bot.Handler'
+        environment: | 
+          YandexTranslateUrl=https://translate.api.cloud.yandex.net/translate/v2/translate
+          YandexCloudFolderId=${{ secrets.folder_id }}
+          YandexCloudApiKey= ${{ secrets.API_KEY }}
+        include: | 
+          go.mod
+          bot.go
+          translate/translate.go
+        service-account: ajek94ubvkbr37qg03kg
+      
