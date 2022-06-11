@@ -22,5 +22,5 @@ jobs:
           go.mod
           bot.go
           translate/translate.go
-        service-account: ajek94ubvkbr37qg03kg
+        service-account: 'eporusbot'
       
